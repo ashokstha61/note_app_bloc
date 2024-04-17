@@ -2,9 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/create_notes_screen.dart';
+import 'package:todo_app/cubit/fetch_note_cubit.dart';
+import 'package:todo_app/cubit/note_state.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/widgets/warinig_diaglog.dart';
 
@@ -57,6 +60,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   @override
+  void initState() {
+    context.read<FetchNoteCubit>().fetch();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -65,69 +74,58 @@ class _HomePageScreenState extends State<HomePageScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final res = await Navigator.of(context).push(
+          Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => CreateNotesScreen(),
             ),
           );
-          if (res == true) {
-            setState(() {});
-          }
         },
         child: Icon(
           Icons.add,
         ),
       ),
-      body: FutureBuilder<List<Todo>>(
-        future: fetchTodoList(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              if (snapshot.data == null || snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text("No NOtes Found."),
-                );
-              } else {
-                return ListView.builder(
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(snapshot.data![index].title),
-                      subtitle: Text(snapshot.data![index].description),
-                      trailing: IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => DeleteNoteWarningDialog(
-                              onConfirm: () {
-                                onDelete(snapshot.data![index].id);
-                              },
-                            ),
-                          );
-                        },
-                        icon: Icon(Icons.delete),
+      body: BlocBuilder<FetchNoteCubit, NoteState>(
+        builder: (context, state) {
+          if (state is NoteSuccessState) {
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(state.todo[index].title),
+                  subtitle: Text(state.todo[index].description),
+                  trailing: IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DeleteNoteWarningDialog(
+                          onConfirm: () {
+                            onDelete(state.todo[index].id);
+                          },
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.delete),
+                  ),
+                  onTap: () async {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CreateNotesScreen(
+                          todo: state.todo[index],
+                        ),
                       ),
-                      onTap: () async {
-                        final res = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CreateNotesScreen(
-                              todo: snapshot.data![index],
-                            ),
-                          ),
-                        );
-                        if (res == true) {
-                          setState(() {});
-                        }
-                      },
                     );
                   },
-                  itemCount: snapshot.data!.length,
                 );
-              }
-            } else {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            }
+              },
+              itemCount: state.todo.length,
+            );
+          } else if (state is NoteErrorState) {
+            return Center(
+              child: Text(state.message),
+            );
+          } else if (state is NoteNoDataState) {
+            return Center(
+              child: Text("No data saved till now."),
+            );
           } else {
             return Center(
               child: CupertinoActivityIndicator(),
