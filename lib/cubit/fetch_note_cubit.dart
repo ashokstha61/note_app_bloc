@@ -4,7 +4,7 @@ import 'package:todo_app/repository/note_repository.dart';
 
 class FetchNoteCubit extends Cubit<NoteState> {
   final NoteRepository repository;
-  FetchNoteCubit(this.repository) : super(NoteInitialState());
+  FetchNoteCubit({required this.repository}) : super(NoteInitialState());
 
   fetch() async {
     emit(NoteLoadingState());

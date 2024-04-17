@@ -1,6 +1,11 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:todo_app/cubit/fetch_note_cubit.dart';
 import 'package:todo_app/homepage.dart';
+import 'package:todo_app/repository/note_repository.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,15 +17,23 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GlobalLoaderOverlay(
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-          useMaterial3: false,
+    return RepositoryProvider(
+      create: (context) => NoteRepository(),
+      child: GlobalLoaderOverlay(
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+            useMaterial3: false,
+          ),
+          home: BlocProvider(
+            create: (context) => FetchNoteCubit(
+              repository : context.read<NoteRepository>(),
+            ),
+            child: HomePageScreen(),
+          ),
+          debugShowCheckedModeBanner: false,
         ),
-        home: HomePageScreen(),
-        debugShowCheckedModeBanner: false,
       ),
     );
   }

@@ -20,22 +20,22 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  Future<List<Todo>> fetchTodoList() async {
-    final dio = Dio();
-    final res =
-        await dio.get("https://note-backend-n9u1.onrender.com/api/notes");
-    //res.status code
-    //
-    List temp = List.from(res.data["data"]);
-    return temp.map((e) => Todo.fromMap(e)).toList();
-    // return List.generate(
-    //   10,
-    //   (index) => Todo(
-    //     title: Faker().person.name(),
-    //     description: Faker().address.city(),
-    //   ),
-    // );
-  }
+  // Future<List<Todo>> fetchTodoList() async {
+  //   final dio = Dio();
+  //   final res =
+  //       await dio.get("https://note-backend-n9u1.onrender.com/api/notes");
+  //   //res.status code
+  //   //
+  //   List temp = List.from(res.data["data"]);
+  //   return temp.map((e) => Todo.fromMap(e)).toList();
+  //   // return List.generate(
+  //   //   10,
+  //   //   (index) => Todo(
+  //   //     title: Faker().person.name(),
+  //   //     description: Faker().address.city(),
+  //   //   ),
+  //   // );
+  // }
 
   Future<void> onDelete(String id) async {
     try {
