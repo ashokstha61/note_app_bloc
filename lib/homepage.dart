@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/create_notes_screen.dart';
+import 'package:todo_app/cubit/common_state.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
 import 'package:todo_app/cubit/note_state.dart';
 import 'package:todo_app/model/todo.dart';
@@ -84,21 +85,21 @@ class _HomePageScreenState extends State<HomePageScreen> {
           Icons.add,
         ),
       ),
-      body: BlocBuilder<FetchNoteCubit, NoteState>(
+      body: BlocBuilder<FetchNoteCubit, CommonState>(
         builder: (context, state) {
-          if (state is NoteSuccessState) {
+          if (state is CommonSuccessState) {
             return ListView.builder(
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(state.todo[index].title),
-                  subtitle: Text(state.todo[index].description),
+                  title: Text(state.data[index].title),
+                  subtitle: Text(state.data[index].description),
                   trailing: IconButton(
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (context) => DeleteNoteWarningDialog(
                           onConfirm: () {
-                            onDelete(state.todo[index].id);
+                            onDelete(state.data[index].id);
                           },
                         ),
                       );
@@ -109,20 +110,20 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => CreateNotesScreen(
-                          todo: state.todo[index],
+                          todo: state.data[index],
                         ),
                       ),
                     );
                   },
                 );
               },
-              itemCount: state.todo.length,
+              itemCount: state.data.length,
             );
-          } else if (state is NoteErrorState) {
+          } else if (state is CommonErrorState) {
             return Center(
               child: Text(state.message),
             );
-          } else if (state is NoteNoDataState) {
+          } else if (state is CommonNoDataState) {
             return Center(
               child: Text("No data saved till now."),
             );

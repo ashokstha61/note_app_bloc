@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:todo_app/cubit/add_note_cubit.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
 import 'package:todo_app/homepage.dart';
 import 'package:todo_app/repository/note_repository.dart';
@@ -18,20 +18,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider(
       create: (context) => NoteRepository(),
-      child: GlobalLoaderOverlay(
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-            useMaterial3: false,
-          ),
-          home: BlocProvider(
-            create: (context) => FetchNoteCubit(
-              repository : context.read<NoteRepository>(),
+      child: BlocProvider(
+        create: (context) => AddNoteCubit(
+          repository: context.read<NoteRepository>(),
+        ),
+        child: GlobalLoaderOverlay(
+          child: MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+              useMaterial3: false,
             ),
-            child: HomePageScreen(),
+            home: BlocProvider(
+              create: (context) => FetchNoteCubit(
+                repository: context.read<NoteRepository>(),
+              ),
+              child: HomePageScreen(),
+            ),
+            debugShowCheckedModeBanner: false,
           ),
-          debugShowCheckedModeBanner: false,
         ),
       ),
     );

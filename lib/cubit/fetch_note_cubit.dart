@@ -1,21 +1,30 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/cubit/note_state.dart';
+import 'package:todo_app/cubit/add_note_cubit.dart';
+import 'package:todo_app/cubit/common_state.dart';
+import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/repository/note_repository.dart';
 
-class FetchNoteCubit extends Cubit<NoteState> {
+class FetchNoteCubit extends Cubit<CommonState> {
   final NoteRepository repository;
-  FetchNoteCubit({required this.repository}) : super(NoteInitialState());
+  final AddNoteCubit addNoteCubit;
+
+  StreamSubscription? _subscription;
+  
+  FetchNoteCubit({required this.addNoteCubit, required this.repository})
+      : super(CommonInitialState());
 
   fetch() async {
-    emit(NoteLoadingState());
+    emit(CommonLoadingState());
     final res = await repository.fetchNotes();
     res.fold(
-      (err) => emit(NoteErrorState(message: err)),
+      (err) => emit(CommonErrorState(message: err)),
       (data) {
         if (data.isEmpty) {
-          emit(NoteNoDataState());
+          emit(CommonNoDataState());
         } else {
-          emit(NoteSuccessState(todo: data));
+          emit(CommonSuccessState<List<Todo>>(data: data));
         }
       },
     );

@@ -25,4 +25,27 @@ class NoteRepository {
       return Left(e.toString());
     }
   }
+
+  Future<Either<String, void>> addNotes({
+    required String title,
+    required String description,
+  }) async {
+    try {
+      final _ = await _dio.post(
+        "https://note-backend-n9u1.onrender.com/api/notes",
+        data: {
+          "title": title,
+          "description": description,
+        },
+      );
+      //res.status code
+      //
+      // Todo temp = Todo.fromMap(res.data["data"]);
+      return Right(null);
+    } on DioException catch (e) {
+      return Left(e.response?.data["message"] ?? "Unable to add notes");
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 }
