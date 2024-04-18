@@ -12,10 +12,11 @@ class NoteErrorState extends NoteState {
   NoteErrorState({required this.message});
 }
 
-class NoteSuccessState extends NoteState {
-  final List<Todo> todo;
+class NoteSuccessState<T> extends NoteState {
+  final T data;
+  // final List<Todo> todo;
 
-  NoteSuccessState({required this.todo});
+  NoteSuccessState( {required this.data});
 }
 
 class NoteNoDataState extends NoteState {}
