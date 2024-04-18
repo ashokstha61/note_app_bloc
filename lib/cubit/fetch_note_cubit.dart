@@ -11,9 +11,15 @@ class FetchNoteCubit extends Cubit<CommonState> {
   final AddNoteCubit addNoteCubit;
 
   StreamSubscription? _subscription;
-  
+
   FetchNoteCubit({required this.addNoteCubit, required this.repository})
-      : super(CommonInitialState());
+      : super(CommonInitialState()) {
+    _subscription = addNoteCubit.stream.listen((event) {
+      if (event is CommonSuccessState) {
+        fetch();
+      }
+    });
+  }
 
   fetch() async {
     emit(CommonLoadingState());
@@ -28,5 +34,11 @@ class FetchNoteCubit extends Cubit<CommonState> {
         }
       },
     );
+  }
+
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
   }
 }

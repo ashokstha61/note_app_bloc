@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
             home: BlocProvider(
               create: (context) => FetchNoteCubit(
                 repository: context.read<NoteRepository>(),
+                addNoteCubit: context.read<AddNoteCubit>(),
               ),
               child: HomePageScreen(),
             ),

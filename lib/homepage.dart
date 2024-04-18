@@ -8,7 +8,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/create_notes_screen.dart';
 import 'package:todo_app/cubit/common_state.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
-import 'package:todo_app/cubit/note_state.dart';
+
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/widgets/warinig_diaglog.dart';
 
@@ -77,7 +77,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         onPressed: () async {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => CreateNotesScreen(),
+              builder: (_) => CreateNotesScreen(),
             ),
           );
         },

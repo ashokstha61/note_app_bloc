@@ -86,7 +86,6 @@ class _CreateNotesScreenState extends State<CreateNotesScreen> {
 
           if (state is CommonSuccessState) {
             Fluttertoast.showToast(msg: "Note added successfully.");
-            context.read<FetchNoteCubit>().fetch();
             Navigator.of(context).pop();
           } else if (state is CommonErrorState) {
             Fluttertoast.showToast(msg: state.message);
