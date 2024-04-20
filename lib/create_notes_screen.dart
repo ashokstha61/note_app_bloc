@@ -44,24 +44,24 @@ class _CreateNotesScreenState extends State<CreateNotesScreen> {
   //   }
   // }
 
-  Future<void> onUpdate() async {
-    try {
-      context.loaderOverlay.show();
-      final dio = Dio();
-      final _ = await dio.put(
-          "https://note-backend-n9u1.onrender.com/api/notes/${widget.todo?.id}",
-          data: _formKey.currentState!.value);
-      Fluttertoast.showToast(msg: "Notes Updated successfully");
-      Navigator.of(context).pop(true);
-    } on DioException catch (e) {
-      Fluttertoast.showToast(
-          msg: e.response?.data["message"] ?? "Unable to Update note");
-    } catch (e) {
-      Fluttertoast.showToast(msg: "unable to Update message");
-    } finally {
-      context.loaderOverlay.hide();
-    }
-  }
+  // Future<void> onUpdate() async {
+  //   try {
+  //     context.loaderOverlay.show();
+  //     final dio = Dio();
+  //     final _ = await dio.put(
+  //         "https://note-backend-n9u1.onrender.com/api/notes/${widget.todo?.id}",
+  //         data: _formKey.currentState!.value);
+  //     Fluttertoast.showToast(msg: "Notes Updated successfully");
+  //     Navigator.of(context).pop(true);
+  //   } on DioException catch (e) {
+  //     Fluttertoast.showToast(
+  //         msg: e.response?.data["message"] ?? "Unable to Update note");
+  //   } catch (e) {
+  //     Fluttertoast.showToast(msg: "unable to Update message");
+  //   } finally {
+  //     context.loaderOverlay.hide();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

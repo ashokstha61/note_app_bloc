@@ -16,7 +16,8 @@ class FetchNoteCubit extends Cubit<CommonState> {
       : super(CommonInitialState()) {
     _subscription = addNoteCubit.stream.listen((event) {
       if (event is CommonSuccessState) {
-        fetch();
+        // fetch();
+        refresh();
       }
     });
   }
@@ -34,6 +35,11 @@ class FetchNoteCubit extends Cubit<CommonState> {
         }
       },
     );
+  }
+
+  refresh() async {
+    emit(CommonLoadingState());
+    emit(CommonSuccessState<List<Todo>>(data: repository.notes));
   }
 
   @override
