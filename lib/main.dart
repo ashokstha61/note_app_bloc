@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/cubit/add_note_cubit.dart';
+import 'package:todo_app/cubit/delete_note_cubit.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
+import 'package:todo_app/cubit/update_notes_cubit.dart';
 import 'package:todo_app/homepage.dart';
 import 'package:todo_app/repository/note_repository.dart';
 
@@ -18,10 +20,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider(
       create: (context) => NoteRepository(),
-      child: BlocProvider(
-        create: (context) => AddNoteCubit(
-          repository: context.read<NoteRepository>(),
-        ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AddNoteCubit(
+              repository: context.read<NoteRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => UpdateNoteCubit(
+              repository: context.read<NoteRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => DeleteNoteCubit(
+              repository: context.read<NoteRepository>(),
+            ),
+          ),
+        ],
         child: GlobalLoaderOverlay(
           child: MaterialApp(
             title: 'Flutter Demo',
