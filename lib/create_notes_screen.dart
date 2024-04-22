@@ -8,7 +8,9 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/cubit/add_note_cubit.dart';
 import 'package:todo_app/cubit/common_state.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
+import 'package:todo_app/cubit/update_notes_cubit.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/utils/bloc_utils.dart';
 import 'package:todo_app/widgets/custom_field_button.dart';
 import 'package:todo_app/widgets/custom_text_field.dart';
 
@@ -76,21 +78,32 @@ class _CreateNotesScreenState extends State<CreateNotesScreen> {
           ),
         ],
       ),
-      body: BlocListener<AddNoteCubit, CommonState>(
-        listener: (context, state) {
-          if (state is CommonLoadingState) {
-            context.loaderOverlay.show();
-          } else {
-            context.loaderOverlay.hide();
-          }
-
-          if (state is CommonSuccessState) {
-            Fluttertoast.showToast(msg: "Note added successfully.");
-            Navigator.of(context).pop();
-          } else if (state is CommonErrorState) {
-            Fluttertoast.showToast(msg: state.message);
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<AddNoteCubit, CommonState>(
+            listener: (context, state) {
+              BlocUtils.defaultBlocListener(
+                context: context,
+                state: state,
+                onSuccess: () {
+                  Fluttertoast.showToast(msg: "Notes added successfully");
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+          BlocListener<UpdateNoteCubit, CommonState>(
+            listener: (context, state) {
+              BlocUtils.defaultBlocListener(
+                  context: context,
+                  state: state,
+                  onSuccess: () {
+                    Fluttertoast.showToast(msg: "Notes Updated successfully");
+                    Navigator.of(context).pop();
+                  });
+            },
+          ),
+        ],
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: FormBuilder(
@@ -132,7 +145,12 @@ class _CreateNotesScreenState extends State<CreateNotesScreen> {
                   onPressed: () async {
                     if (_formKey.currentState!.saveAndValidate()) {
                       if (widget.todo != null) {
-                        onUpdate();
+                        context.read<UpdateNoteCubit>().updateNote(
+                              id: widget.todo!.id,
+                              title: _formKey.currentState!.value["title"],
+                              description:
+                                  _formKey.currentState!.value["description"],
+                            );
                       } else {
                         context.read<AddNoteCubit>().addNote(
                               title: _formKey.currentState!.value["title"],

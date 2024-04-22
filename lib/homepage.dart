@@ -7,9 +7,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/create_notes_screen.dart';
 import 'package:todo_app/cubit/common_state.dart';
+import 'package:todo_app/cubit/delete_note_cubit.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
 
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/utils/bloc_utils.dart';
 import 'package:todo_app/widgets/warinig_diaglog.dart';
 
 class HomePageScreen extends StatefulWidget {
@@ -41,24 +43,24 @@ class _HomePageScreenState extends State<HomePageScreen> {
   //   // );
   // }
 
-  Future<void> onDelete(String id) async {
-    try {
-      context.loaderOverlay.show();
-      final dio = Dio();
-      final _ = await dio.delete(
-        "https://note-backend-n9u1.onrender.com/api/notes/${id}",
-      );
-      Fluttertoast.showToast(msg: "Notes Deleted successfully");
-      setState(() {});
-    } on DioException catch (e) {
-      Fluttertoast.showToast(
-          msg: e.response?.data["message"] ?? "Unable to Delete note");
-    } catch (e) {
-      Fluttertoast.showToast(msg: "unable to Delete message");
-    } finally {
-      context.loaderOverlay.hide();
-    }
-  }
+  // Future<void> onDelete(String id) async {
+  //   try {
+  //     context.loaderOverlay.show();
+  //     final dio = Dio();
+  //     final _ = await dio.delete(
+  //       "https://note-backend-n9u1.onrender.com/api/notes/${id}",
+  //     );
+  //     Fluttertoast.showToast(msg: "Notes Deleted successfully");
+  //     setState(() {});
+  //   } on DioException catch (e) {
+  //     Fluttertoast.showToast(
+  //         msg: e.response?.data["message"] ?? "Unable to Delete note");
+  //   } catch (e) {
+  //     Fluttertoast.showToast(msg: "unable to Delete message");
+  //   } finally {
+  //     context.loaderOverlay.hide();
+  //   }
+  // }
 
   @override
   void initState() {
@@ -85,54 +87,66 @@ class _HomePageScreenState extends State<HomePageScreen> {
           Icons.add,
         ),
       ),
-      body: BlocBuilder<FetchNoteCubit, CommonState>(
-        builder: (context, state) {
-          if (state is CommonSuccessState) {
-            return ListView.builder(
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(state.data[index].title),
-                  subtitle: Text(state.data[index].description),
-                  trailing: IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => DeleteNoteWarningDialog(
-                          onConfirm: () {
-                            onDelete(state.data[index].id);
-                          },
+      body: BlocListener<DeleteNoteCubit, CommonState>(
+        listener: (context, state) {
+          BlocUtils.defaultBlocListener(
+              context: context,
+              state: state,
+              onSuccess: () {
+                Fluttertoast.showToast(msg: "Note Delete Successfully");
+              });
+        },
+        child: BlocBuilder<FetchNoteCubit, CommonState>(
+          builder: (context, state) {
+            if (state is CommonSuccessState) {
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(state.data[index].title),
+                    subtitle: Text(state.data[index].description),
+                    trailing: IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => DeleteNoteWarningDialog(
+                            onConfirm: () {
+                              context.read<DeleteNoteCubit>().DeleteNote(
+                                    id: state.data[index].id,
+                                  );
+                            },
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.delete),
+                    ),
+                    onTap: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CreateNotesScreen(
+                            todo: state.data[index],
+                          ),
                         ),
                       );
                     },
-                    icon: Icon(Icons.delete),
-                  ),
-                  onTap: () async {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CreateNotesScreen(
-                          todo: state.data[index],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              itemCount: state.data.length,
-            );
-          } else if (state is CommonErrorState) {
-            return Center(
-              child: Text(state.message),
-            );
-          } else if (state is CommonNoDataState) {
-            return Center(
-              child: Text("No data saved till now."),
-            );
-          } else {
-            return Center(
-              child: CupertinoActivityIndicator(),
-            );
-          }
-        },
+                  );
+                },
+                itemCount: state.data.length,
+              );
+            } else if (state is CommonErrorState) {
+              return Center(
+                child: Text(state.message),
+              );
+            } else if (state is CommonNoDataState) {
+              return Center(
+                child: Text("No data saved till now."),
+              );
+            } else {
+              return Center(
+                child: CupertinoActivityIndicator(),
+              );
+            }
+          },
+        ),
       ),
     );
   }

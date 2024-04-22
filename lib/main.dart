@@ -49,6 +49,8 @@ class MyApp extends StatelessWidget {
               create: (context) => FetchNoteCubit(
                 repository: context.read<NoteRepository>(),
                 addNoteCubit: context.read<AddNoteCubit>(),
+                updateNoteCubit: context.read<UpdateNoteCubit>(),
+                deleteNoteCubit: context.read<DeleteNoteCubit>(),
               ),
               child: HomePageScreen(),
             ),

@@ -58,8 +58,12 @@ class NoteRepository {
       required String title,
       required String description}) async {
     try {
-      final res = await _dio.delete(
-        "https://note-backend-n9u1.onrender.com/api/notes/$id}",
+      final res = await _dio.put(
+        "https://note-backend-n9u1.onrender.com/api/notes/$id",
+        data: {
+          "title": title,
+          "description": description,
+        },
       );
       Todo temp = Todo.fromMap(res.data["data"]);
       final index = _notes.indexWhere((e) => e.id == temp.id);
@@ -76,8 +80,8 @@ class NoteRepository {
 
   Future<Either<String, void>> deleteNotes({required String id}) async {
     try {
-      final _ = await _dio.put(
-        "https://note-backend-n9u1.onrender.com/api/notes/$id}",
+      final _ = await _dio.delete(
+        "https://note-backend-n9u1.onrender.com/api/notes/$id",
       );
       _notes.removeWhere((e) => e.id == id);
       return Right(null);

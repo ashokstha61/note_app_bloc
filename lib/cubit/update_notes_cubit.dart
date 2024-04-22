@@ -12,7 +12,10 @@ class UpdateNoteCubit extends Cubit<CommonState> {
   }) async {
     emit(CommonLoadingState());
     final res = await repository.updateNotes(
-        id: id, title: title, description: description);
+      id: id,
+      title: title,
+      description: description,
+    );
     res.fold(
       (err) => emit(CommonErrorState(message: err)),
       (data) => emit(CommonSuccessState(data: null)),
