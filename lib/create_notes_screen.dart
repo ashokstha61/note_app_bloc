@@ -1,13 +1,12 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:loader_overlay/loader_overlay.dart';
+// import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/cubit/add_note_cubit.dart';
 import 'package:todo_app/cubit/common_state.dart';
-import 'package:todo_app/cubit/fetch_note_cubit.dart';
+// import 'package:todo_app/cubit/fetch_note_cubit.dart';
 import 'package:todo_app/cubit/update_notes_cubit.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/utils/bloc_utils.dart';

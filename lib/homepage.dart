@@ -1,10 +1,7 @@
-import 'package:dio/dio.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/create_notes_screen.dart';
 import 'package:todo_app/cubit/common_state.dart';
 import 'package:todo_app/cubit/delete_note_cubit.dart';
