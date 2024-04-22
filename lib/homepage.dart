@@ -69,7 +69,20 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Notes"),
+        title: BlocSelector<FetchNoteCubit, CommonState, String>(
+          selector: (state) {
+            if (state is CommonSuccessState<List<Todo>>) {
+              return state.data.length.toString();
+            } else if (state is CommonNoDataState) {
+              return "0";
+            } else {
+              return "-";
+            }
+          },
+          builder: (context, state) {
+            return Text("Notes ($state)");
+          },
+        ),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
