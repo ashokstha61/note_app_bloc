@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/cubit/add_note_cubit.dart';
 import 'package:todo_app/cubit/common_state.dart';
+import 'package:todo_app/cubit/note_event.dart';
 // import 'package:todo_app/cubit/fetch_note_cubit.dart';
 import 'package:todo_app/cubit/update_notes_cubit.dart';
 import 'package:todo_app/model/todo.dart';
@@ -151,11 +152,12 @@ class _CreateNotesScreenState extends State<CreateNotesScreen> {
                                   _formKey.currentState!.value["description"],
                             );
                       } else {
-                        context.read<AddNoteCubit>().addNote(
-                              title: _formKey.currentState!.value["title"],
-                              description:
-                                  _formKey.currentState!.value["description"],
-                            );
+                        final parm = AddNoteEvent(
+                          title: _formKey.currentState!.value["title"],
+                          description:
+                              _formKey.currentState!.value["description"],
+                        );
+                        context.read<AddNoteCubit>().add(parm);
                       }
                     }
                   },

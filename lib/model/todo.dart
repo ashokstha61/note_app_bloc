@@ -15,4 +15,11 @@ class Todo {
       description: map["description"],
     );
   }
+  factory Todo.fromDB(Map<String, dynamic> map) {
+    return Todo(
+      id: map["id"],
+      title: map["title"],
+      description: map["description"],
+    );
+  }
 }

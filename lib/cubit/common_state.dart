@@ -1,5 +1,3 @@
-import 'package:todo_app/model/todo.dart';
-
 abstract class CommonState {}
 
 class CommonInitialState extends CommonState {}
