@@ -14,14 +14,16 @@ class NoteRepository {
 
   Future<Either<String, List<Todo>>> fetchNotes() async {
     try {
-      // final res =
-      //     await _dio.get("https://note-backend-n9u1.onrender.com/api/notes");
-      // //res.status code
-      // //
+      final res =
+          await _dio.get("https://note-backend-n9u1.onrender.com/api/notes");
+      //res.status code
+      //
 
-      // List temp = List.from(res.data["data"]);
-      // final finalList = temp.map((e) => Todo.fromMap(e)).toList();
-      final finalList = await DatabaseServices.fetchNotes();
+      List temp = List.from(res.data["data"]);
+      final finalList = temp.map((e) => Todo.fromMap(e)).toList();
+      await DatabaseServices.deleteAllNote();
+      await DatabaseServices.insertAllNote(finalList);
+      // final finalList = await DatabaseServices.fetchNotes();
       _notes.clear();
       _notes.addAll(finalList);
       return Right(_notes);

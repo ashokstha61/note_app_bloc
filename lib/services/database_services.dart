@@ -87,8 +87,10 @@ class DatabaseServices {
     final _ = await instance.delete(_tableName);
   }
 
-  static Future<void> insertAllNote() async {
+  static Future<void> insertAllNote(List<Todo> notes) async {
     final instance = await db;
-    final _ = await instance.delete(_tableName);
+    for (Todo todo in notes) {
+      final _ = await instance.insert(_tableName, todo.toDBData());
+    }
   }
 }
