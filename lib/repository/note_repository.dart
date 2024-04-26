@@ -145,16 +145,18 @@ class NoteRepository {
 
   Future<Either<String, void>> syncNotes() async {
     try {
-      final unsyncData = await DatabaseServices.getUnSyncronizedData();
+      final unSyncData = await DatabaseServices.getUnSyncData();
 
       final _ = await _dio.post(
         "https://note-backend-n9u1.onrender.com/api/notes/sync",
         data: {
-          "todo": unsyncData.map((e) => {
-                "id": e.id,
-                "title": e.title,
-                "description": e.description,
-              }),
+          "todo": unSyncData
+              .map((e) => {
+                    "_id": e.id,
+                    "title": e.title,
+                    "description": e.description,
+                  })
+              .toList(),
         },
       );
       //res.status code

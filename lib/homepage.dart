@@ -6,6 +6,7 @@ import 'package:todo_app/create_notes_screen.dart';
 import 'package:todo_app/cubit/common_state.dart';
 import 'package:todo_app/cubit/delete_note_cubit.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
+import 'package:todo_app/cubit/sync_data_cubit.dart';
 import 'package:todo_app/cubit/unsync_data_control_cubit.dart';
 
 import 'package:todo_app/model/todo.dart';
@@ -130,6 +131,17 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   context.read<FetchNoteCubit>().fetch();
                 }
               }
+            },
+          ),
+          BlocListener<SyncDataCubit, CommonState>(
+            listener: (context, state) {
+              BlocUtils.defaultBlocListener(
+                  context: context,
+                  state: state,
+                  onSuccess: () {
+                    Fluttertoast.showToast(msg: "Note Sync Successfully");
+                    context.read<FetchNoteCubit>().fetch();
+                  });
             },
           ),
         ],

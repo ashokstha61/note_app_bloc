@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/cubit/sync_data_cubit.dart';
 import 'package:todo_app/cubit/unsync_data_control_cubit.dart';
 
 class SyncBottomPage extends StatelessWidget {
@@ -10,11 +10,12 @@ class SyncBottomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("Syncing Alert"),
-      content: Text("You have unsyncronized data. Please Sync the data"),
+      content: Text("You have un-Sync data. Please Sync the data"),
       actions: [
         TextButton(
           onPressed: () {
             context.read<UnSyncDataControlCubit>().dialogBoxClosed();
+            context.read<SyncDataCubit>().sync();
             Navigator.pop(context);
           },
           child: Text("Sync"),

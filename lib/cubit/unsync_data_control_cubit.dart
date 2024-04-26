@@ -2,19 +2,19 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubit/common_state.dart';
-import 'package:todo_app/cubit/connection_state_check.dart';
+import 'package:todo_app/cubit/connection_cubit.dart';
 import 'package:todo_app/services/database_services.dart';
 
 class UnSyncDataControlCubit extends Cubit<CommonState> {
-  final ConnectionCheckCubit connectionCubit;
+  final ConnectionCubit connectionCubit;
   StreamSubscription? _subscription;
   bool _dialogOpen = false;
   UnSyncDataControlCubit({required this.connectionCubit})
       : super(CommonInitialState()) {
     _subscription = connectionCubit.stream.listen((event) async {
-      if (event == ConnectionCheck.Connected && _dialogOpen == false) {
-        final unsyncList = await DatabaseServices.getUnSyncronizedData();
-        if (unsyncList.isNotEmpty) {
+      if (event == ConnectionCheck.Connected) {
+        final unSyncList = await DatabaseServices.getUnSyncData();
+        if (unSyncList.isNotEmpty && _dialogOpen == false) {
           _dialogOpen = true;
           emit(CommonLoadingState());
           emit(CommonSuccessState(data: true));

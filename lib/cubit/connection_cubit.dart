@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum ConnectionCheck { Connected, NotConnected }
 
-class ConnectionCheckCubit extends Cubit<ConnectionCheck> {
+class ConnectionCubit extends Cubit<ConnectionCheck> {
   StreamSubscription? _subscription;
-  ConnectionCheckCubit() : super(ConnectionCheck.NotConnected) {
+  ConnectionCubit() : super(ConnectionCheck.NotConnected) {
     Connectivity().checkConnectivity().then((event) {
       if (!event.contains(ConnectivityResult.none)) {
         emit(ConnectionCheck.Connected);

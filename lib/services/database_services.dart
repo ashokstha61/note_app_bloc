@@ -98,8 +98,8 @@ class DatabaseServices {
     }
   }
 
-  static Future<List<Todo>> getUnSyncronizedData() async {
-    final instance =await db;
+  static Future<List<Todo>> getUnSyncData() async {
+    final instance = await db;
     final temp= await instance.query(_tableName, where: "$_tableSync =?", whereArgs: [false]);
     return temp.map((r) => Todo.fromDB(r)).toList();
   }
