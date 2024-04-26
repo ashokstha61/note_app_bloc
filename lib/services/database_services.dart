@@ -38,16 +38,18 @@ class DatabaseServices {
   }
 
   static Future<Todo> createNote({
+    String? id,
     required String title,
     required String description,
+    required DateTime createAt,
   }) async {
     final instance = await db;
     Map<String, dynamic> param = {
-      _tableId: Uuid().v4(),
+      _tableId: id ?? "local-${Uuid().v4()}",
       _tableTitle: title,
       _tableDescription: description,
-      _tableCreated: DateTime.now().microsecondsSinceEpoch,
-      _tableSync: false,
+      _tableCreated: createAt.microsecondsSinceEpoch,
+      _tableSync: id != null,
     };
     final _ = await instance.insert(_tableName, param);
     return Todo.fromDB(param);
@@ -57,11 +59,13 @@ class DatabaseServices {
     required String id,
     required String title,
     required String description,
+    required bool sync,
   }) async {
     final instance = await db;
     Map<String, dynamic> param = {
       _tableTitle: title,
       _tableDescription: description,
+      _tableSync: sync,
     };
     final _ = await instance
         .update(_tableName, param, where: "id=?", whereArgs: [id]);
@@ -92,5 +96,11 @@ class DatabaseServices {
     for (Todo todo in notes) {
       final _ = await instance.insert(_tableName, todo.toDBData());
     }
+  }
+
+  static Future<List<Todo>> getUnSyncronizedData() async {
+    final instance =await db;
+    final temp= await instance.query(_tableName, where: "$_tableSync =?", whereArgs: [false]);
+    return temp.map((r) => Todo.fromDB(r)).toList();
   }
 }

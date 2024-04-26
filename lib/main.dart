@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:todo_app/cubit/add_note_cubit.dart';
+import 'package:todo_app/cubit/connection_state_check.dart';
 import 'package:todo_app/cubit/delete_note_cubit.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
+import 'package:todo_app/cubit/unsync_data_control_cubit.dart';
 import 'package:todo_app/cubit/update_notes_cubit.dart';
 import 'package:todo_app/homepage.dart';
 import 'package:todo_app/repository/note_repository.dart';
@@ -22,6 +24,13 @@ class MyApp extends StatelessWidget {
       create: (context) => NoteRepository(),
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) => ConnectionCheckCubit(),
+          ),
+          BlocProvider(
+            create: (context) => UnSyncDataControlCubit(
+                connectionCubit: context.read<ConnectionCheckCubit>()),
+          ),
           BlocProvider(
             create: (context) => AddNoteCubit(
               repository: context.read<NoteRepository>(),

@@ -6,8 +6,10 @@ import 'package:todo_app/create_notes_screen.dart';
 import 'package:todo_app/cubit/common_state.dart';
 import 'package:todo_app/cubit/delete_note_cubit.dart';
 import 'package:todo_app/cubit/fetch_note_cubit.dart';
+import 'package:todo_app/cubit/unsync_data_control_cubit.dart';
 
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/sync_botton_page.dart';
 import 'package:todo_app/utils/bloc_utils.dart';
 import 'package:todo_app/widgets/warinig_diaglog.dart';
 
@@ -83,6 +85,16 @@ class _HomePageScreenState extends State<HomePageScreen> {
             return Text("Notes ($state)");
           },
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showSyncDialog(context: context);
+            },
+            icon: Icon(
+              Icons.check_box,
+            ),
+          )
+        ],
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
@@ -97,15 +109,30 @@ class _HomePageScreenState extends State<HomePageScreen> {
           Icons.add,
         ),
       ),
-      body: BlocListener<DeleteNoteCubit, CommonState>(
-        listener: (context, state) {
-          BlocUtils.defaultBlocListener(
-              context: context,
-              state: state,
-              onSuccess: () {
-                Fluttertoast.showToast(msg: "Note Delete Successfully");
-              });
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<DeleteNoteCubit, CommonState>(
+            listener: (context, state) {
+              BlocUtils.defaultBlocListener(
+                  context: context,
+                  state: state,
+                  onSuccess: () {
+                    Fluttertoast.showToast(msg: "Note Delete Successfully");
+                  });
+            },
+          ),
+          BlocListener<UnSyncDataControlCubit, CommonState>(
+            listener: (context, state) {
+              if (state is CommonSuccessState<bool> && state.data) {
+                if (state.data) {
+                  showSyncDialog(context: context);
+                } else {
+                  context.read<FetchNoteCubit>().fetch();
+                }
+              }
+            },
+          ),
+        ],
         child: BlocBuilder<FetchNoteCubit, CommonState>(
           builder: (context, state) {
             if (state is CommonSuccessState) {
